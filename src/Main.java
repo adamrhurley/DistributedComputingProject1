@@ -41,7 +41,7 @@ import java.awt.BorderLayout;
             panel.add(passwordText);
             panel.add(buttonLogin,BorderLayout.SOUTH);
 
-            buttonLogin.addActionListener(e -> Login.login());
+            buttonLogin.addActionListener(e -> Login.login(passwordText.getText(),usernameText.getText()));
 
             // set the size of frame
             frame.setSize(1000, 600);
