@@ -1,8 +1,10 @@
 import java.awt.*;
 import javax.swing.*;
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-    public class Main extends JFrame {
+public class Main extends JFrame {
         static JFrame frame;
 
         static JButton buttonLogin;
@@ -14,6 +16,8 @@ import java.awt.BorderLayout;
         public static void main(String[] args) {
 
             frame = new JFrame("Login");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
 
             // create a label to display text
             usernameLabel = new JLabel("Username");
@@ -41,7 +45,18 @@ import java.awt.BorderLayout;
             panel.add(passwordText);
             panel.add(buttonLogin,BorderLayout.SOUTH);
 
-            buttonLogin.addActionListener(e -> Login.login(passwordText.getText(),usernameText.getText()));
+            buttonLogin.addActionListener(e -> {
+                if (usernameText.getText().equals("admin") && passwordText.getText().equals("admin")) {
+                    new Thread(() ->EchoClient2.main(args)).start();
+                    new Thread(() ->EchoServer3.main(args)).start();
+                    frame.dispose();
+
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Incorrect Username or Password");
+                    passwordText.setText(null);
+                    usernameText.setText(null);
+                }
+            });
 
             // set the size of frame
             frame.setSize(1000, 600);
