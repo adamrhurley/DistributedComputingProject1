@@ -1,17 +1,14 @@
+import javax.swing.*;
 import java.net.*;
 import java.io.*;
 import java.util.ArrayList;
 
-/**
- * A wrapper class of Socket which contains 
- * methods for sending and receiving messages
- * @author M. L. Liu
- */
 public class MyStreamSocket extends Socket {
-   private Socket  socket;
+   private final Socket  socket;
    private BufferedReader input;
    private PrintWriter output;
-   private ArrayList<String> allMessages = new ArrayList<>();
+   private final ArrayList<String> allMessages = new ArrayList<>();
+   JFrame streamFrame = new JFrame();
 
    MyStreamSocket(InetAddress acceptorHost,int acceptorPort ) throws IOException{
       socket = new Socket(acceptorHost, acceptorPort );
@@ -36,7 +33,6 @@ public class MyStreamSocket extends Socket {
    }
 
    public void sendMessage(String message) {
-      System.out.println("HERE SEND");
       output.print(message + "\n");   
       //The ensuing flush method call is necessary for the data to
       // be written to the socket data stream before the
@@ -50,13 +46,54 @@ public class MyStreamSocket extends Socket {
       return input.readLine( );
    } //end receiveMessage
 
-   public ArrayList<String> viewAllMessages(){
-      return allMessages;
+   public String viewAllMessages(){
+      if(allMessages.isEmpty()){
+         return "302";
+      }
+      else{
+      StringBuilder output = new StringBuilder();
+      for (String allMessage : allMessages) {
+         output.append(allMessage).append("\n");
+      }
+
+      JOptionPane.showMessageDialog(streamFrame,output.toString());
+      return "301";
    }
-   public void saveMessages() throws IOException{
-      System.out.println("HERE SAVE");
+   }
+
+   public String logout(){
+      JOptionPane.showMessageDialog(streamFrame,"You have successfully logged out");
+      return "401";
+   }
+
+   public String saveMessages() throws IOException{
       String message = input.readLine( );
       allMessages.add(message);
+      return "201";
+   }
+
+   public void sendText(String message) {
+
+      output.print(message + "\n");
+      //The ensuing flush method call is necessary for the data to
+      // be written to the socket data stream before the
+      // socket is closed.
+      output.flush();
+
+
+   } // end sendMessage
+
+   public String checkLogin() throws IOException {
+
+      String message = input.readLine();
+      String[] split= message.split(",");
+
+      if (split[0].equals("name") && split[1].equals("pass")) {
+         return "101";
+      }
+      else {
+         return "102";
+      }
    }
 
    public void close( )

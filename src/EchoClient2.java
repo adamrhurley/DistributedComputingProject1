@@ -1,113 +1,167 @@
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.awt.*;
+import java.io.IOException;
+
 
 /**
- * This module contains the presentaton logic of an Echo Client.
+ * This module contains the presentation logic of an Echo Client.
  * @author M. L. Liu
  */
-public class EchoClient2 extends Main {
+public class EchoClient2{
+    static JButton buttonLogin;
     static final String endMessage = ".";
     static JFrame frame;
-    static String message, echo;
+    static String message;
     static boolean done = false;
-    public static EchoClientHelper2 helper;
     static JButton buttonCreateMessage;
     static JButton buttonViewMessages;
     static JButton buttonLogout;
-    static List<String> AllMessages = new ArrayList<>();
+    static JLabel usernameLabel,passwordLabel;
+
+    static JTextField usernameText,passwordText;
 
     public static void main(String[] args) {
-        InputStreamReader is = new InputStreamReader(System.in);
-        BufferedReader br = new BufferedReader(is);
 
-//System.out.println("Welcome to the Echo client.\n" +
-        //   "What is the name of the server host?");
-        //String hostName = br.readLine();
         try {
             String hostName = JOptionPane.showInputDialog("Welcome to the Echo client.\n" +
                     "What is the name of the server host?");
             if (hostName.length() == 0) // if user did not enter a name
                 hostName = "localhost";  //   use the default host name
-            //System.out.println("What is the port number of the server host?");
             String portNum = JOptionPane.showInputDialog("What is the port number of the server host?");
             if (portNum.length() == 0)
                 portNum = "500";          // default port number
             EchoClientHelper2 helper =
                     new EchoClientHelper2(hostName, portNum);
 
-
-            frame = new JFrame("Main Menu");
+            frame = new JFrame("Login");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            buttonCreateMessage = new JButton("Create Message");
-            buttonViewMessages = new JButton("View All Messages");
-            buttonLogout = new JButton("Log-out");
+
+
+
+            usernameLabel = new JLabel("Username");
+            passwordLabel = new JLabel("Password");
+
+            buttonLogin = new JButton("Login");
+
+            usernameText = new JTextField();
+            usernameText.setPreferredSize(new Dimension(200, 30));
+            usernameText.setMaximumSize(new Dimension(200, 30));
+
+            passwordText = new JTextField();
+            passwordText.setPreferredSize(new Dimension(200, 30));
+            passwordText.setMaximumSize(new Dimension(200, 30));
 
             JPanel panel = new JPanel();
 
-            panel.add(buttonCreateMessage);
-            buttonCreateMessage.addActionListener(e -> {
-                if (usernameText.getText().equals("admin") && passwordText.getText().equals("admin")) {
-                    // EchoClient2.main(args);
-                    //EchoServer3.main(args);
-                    new Thread(() -> CreateMessage(helper)).start();
 
+            panel.add(usernameLabel);
+            panel.add(usernameText);
+            panel.add(passwordLabel);
+            panel.add(passwordText);
+            panel.add(buttonLogin);
 
-                } else {
-                    JOptionPane.showMessageDialog(frame, "Incorrect Username or Password");
+            buttonLogin.addActionListener(e -> {
+                String username = usernameText.getText();
+                String password = passwordText.getText();
+                try {
+                    String loginStatus;
+                    loginStatus = helper.protocolInterpreter("100",username + "," + password);
+
+                   if(loginStatus.equals("101")){
+                       JOptionPane.showMessageDialog(frame, "Login Successful");
+                       frame.dispose();
+                       mainMenu(helper);
+                   }
+
+                   if(loginStatus.equals("102")){
+                       JOptionPane.showMessageDialog(frame, "Incorrect Username or Password");
+                   }
+
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
                 }
+
             });
-            panel.add(buttonViewMessages);
-            buttonViewMessages.addActionListener(e -> {
-                String output = helper.viewMessages();
-                if (output.equals("")) {
-                    JOptionPane.showMessageDialog(frame, "No messages have been added", "Warning", JOptionPane.WARNING_MESSAGE);
-                } else {
-                    JOptionPane.showMessageDialog(frame, output);
-                }
-            });
-            panel.add(buttonLogout);
-            buttonLogout.addActionListener(e -> System.exit(0));
+
             frame.setSize(1000, 600);
             frame.add(panel);
             frame.setVisible(true);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        } //end catch
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
+    public static void mainMenu(EchoClientHelper2 helper){
 
-    public static void CreateMessage(EchoClientHelper2 helper1) {
+        JFrame frameMenu = new JFrame("Main Menu");
+        frameMenu.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        buttonCreateMessage = new JButton("Create Message");
+        buttonViewMessages = new JButton("View All Messages");
+        buttonLogout = new JButton("Log-out");
 
-        try {
+        JPanel panel1 = new JPanel();
 
-            while (!done) {
-                //System.out.println("Enter a line to receive an echo "
-                //      + "from the server, or a single period to quit.");
-                //message = br.readLine( );
-                message = JOptionPane.showInputDialog("Enter a message");
-                if ((message.trim()).equals(endMessage)) {
-                    done = true;
-                    helper1.done();
-                } else {
-                    //AllMessages.add(message);
-                    //JOptionPane.showMessageDialog(frame, "Message added successfully");
+        panel1.add(buttonCreateMessage);
+        buttonCreateMessage.addActionListener(e -> {
+            try {
+                messageFrame(helper);
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
 
-                    System.out.println("HERE");
-                    System.out.println(message);
-                    System.out.println(EchoClient2.helper);
-                    helper1.getEcho(message);
-                    //System.out.println(echo);
+        });
+        panel1.add(buttonViewMessages);
+        buttonViewMessages.addActionListener(e -> {
+            try {
+                String viewStatus = helper.protocolInterpreter("300",null);
 
+            if (viewStatus.equals("302")) {
+                JOptionPane.showMessageDialog(frame, "No messages have been added", "Warning", JOptionPane.WARNING_MESSAGE);
+            }
+            }catch (IOException ioException) {
+                ioException.printStackTrace(); }
+        });
+
+        panel1.add(buttonLogout);
+        buttonLogout.addActionListener(e -> {
+
+                    try {
+                        String logoutStatus = helper.protocolInterpreter("400", null);
+
+                        if (logoutStatus.equals("401")) {
+                            System.exit(0);
+                        }
+                    } catch (IOException ioException) {
+                        ioException.printStackTrace();
+                    }
+
+                });
+
+
+        frameMenu.setSize(1000, 600);
+        frameMenu.add(panel1);
+        frameMenu.setVisible(true);
+
+    }
+
+    public static void messageFrame(EchoClientHelper2 helper) throws IOException {
+        JFrame frameCreateMessage = new JFrame("Main Menu");
+        frameCreateMessage.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        while (!done) {
+            message = JOptionPane.showInputDialog("Enter a message");
+
+
+            if ((message.trim()).equals(endMessage)) {
+                done = true;
+                helper.done();
+            } else {
+                String createStatus = helper.protocolInterpreter("200", message);
+                if (createStatus.equals("201")) {
+                    JOptionPane.showMessageDialog(frameCreateMessage, "Message added successfully");
                 }
-            } // end while
-        } // end try
-        catch (Exception ex) {
-            ex.printStackTrace();
-        } //end catch
-        /* return AllMessages; */
-    } //end main
-} // end class
+
+            }
+        }
+    }
+}

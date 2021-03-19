@@ -1,51 +1,58 @@
-import javax.swing.*;
 import java.net.*;
 import java.io.*;
-import java.util.ArrayList;
-
-/**
- * This class is a module which provides the application logic
- * for an Echo client using stream-mode socket.
- * @author M. L. Liu
- */
 
 public class EchoClientHelper2 {
 
    static final String endMessage = ".";
-   private MyStreamSocket mySocket;
-   private InetAddress serverHost;
-   private int serverPort;
-   //String AllMessages = "";
+   private final MyStreamSocket mySocket;
+
+   String returnCode;
 
    EchoClientHelper2(String hostName,
                      String portNum) throws IOException {
-                                     
-  	   this.serverHost = InetAddress.getByName(hostName);
-  		this.serverPort = Integer.parseInt(portNum);
-      //Instantiates a stream-mode socket and wait for a connection.
-   	this.mySocket = new MyStreamSocket(this.serverHost,
-         this.serverPort); 
-/**/  System.out.println("Connection request made");
-   } // end constructor
-	
-   public void getEcho(String message) throws IOException {
-      System.out.println("HERE2");
-      //String echo = "";
-      mySocket.sendMessage(message);
-	   // now receive the echo
-      mySocket.saveMessages();
-      //echo = mySocket.receiveMessage();
-     // return echo;
-   } // end getEcho
 
-   public String viewMessages(){
-      ArrayList<String> AllMessages = mySocket.viewAllMessages();
-      StringBuilder output = new StringBuilder();
-      //String output = "";
-      for (String allMessage : AllMessages) {
-         output.append(allMessage).append("\n");
+      InetAddress serverHost = InetAddress.getByName(hostName);
+      int serverPort = Integer.parseInt(portNum);
+      //Instantiates a stream-mode socket and wait for a connection.
+   	this.mySocket = new MyStreamSocket(serverHost,
+            serverPort);
+/**/  System.out.println("Connection request made");
+   }
+	
+
+
+
+   public String protocolInterpreter(String code, String message) throws IOException {
+
+      if(code.equals("100")){
+         mySocket.sendText(message);
+
+
+         returnCode = mySocket.checkLogin();
       }
-      return output.toString();
+
+      if(code.equals("200")){
+         mySocket.sendText((message));
+
+         returnCode = mySocket.saveMessages();
+      }
+
+      if(code.equals("300")){
+         String status;
+         status = mySocket.viewAllMessages();
+
+         returnCode = status;
+          }
+
+      if(code.equals("400")){
+         String status;
+         status = mySocket.logout();
+
+         returnCode = status;
+      }
+
+
+      return returnCode;
    }
 
    public void done( ) throws IOException{

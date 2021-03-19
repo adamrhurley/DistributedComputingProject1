@@ -1,13 +1,3 @@
-import com.sun.net.httpserver.Authenticator;
-
-import javax.swing.*;
-import java.io.*;
-/**
- * This module is to be used with a concurrent Echo server.
- * Its run method carries out the logic of a client session.
- * @author M. L. Liu
- */
-
 class EchoServerThread implements Runnable {
    static final String endMessage = ".";
    MyStreamSocket myDataSocket;
@@ -22,9 +12,7 @@ class EchoServerThread implements Runnable {
       try {
          while (!done) {
              message = myDataSocket.receiveMessage( );
-/**/         //System.out.println("message received: "+ message);
-             JFrame frame = new JFrame();
-             JOptionPane.showMessageDialog(frame,message, "Success",JOptionPane.INFORMATION_MESSAGE);
+/**/
              if ((message.trim()).equals (endMessage)){
                 //Session over; close the data socket.
 /**/            System.out.println("Session over.");
@@ -32,7 +20,7 @@ class EchoServerThread implements Runnable {
                 done = true;
              } //end if
              else {
-                // Now send the echo to the requestor
+                // Now send the echo to the requester
                 myDataSocket.sendMessage(message);
              } //end else
           } //end while !done

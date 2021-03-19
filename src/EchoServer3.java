@@ -1,6 +1,3 @@
-import org.jetbrains.annotations.NotNull;
-
-import java.io.*;
 import java.net.*;
 
 /**
@@ -16,7 +13,6 @@ public class EchoServer3 {
    public static void main(String[] args) {
 
       int serverPort = 500;    // default port
-      String message;
 
       if (args.length == 1 )
          serverPort = Integer.parseInt(args[0]);
@@ -32,7 +28,7 @@ public class EchoServer3 {
             MyStreamSocket myDataSocket = new MyStreamSocket
                 (myConnectionSocket.accept( ));
 /**/        System.out.println("connection accepted");
-            // Start a thread to handle this client's sesson
+            // Start a thread to handle this client's session
             Thread theThread =
                new Thread(new EchoServerThread(myDataSocket));
             theThread.start();
