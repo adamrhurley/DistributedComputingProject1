@@ -3,20 +3,20 @@ import java.net.*;
 import java.io.*;
 import java.util.ArrayList;
 
-public class MyStreamSocket extends Socket {
-   private final Socket  socket;
+public class MyStreamSocket extends java.net.Socket {
+   private final java.net.Socket socket;
    private BufferedReader input;
    private PrintWriter output;
    private final ArrayList<String> allMessages = new ArrayList<>();
    JFrame streamFrame = new JFrame();
 
-   MyStreamSocket(InetAddress acceptorHost,int acceptorPort ) throws IOException{
-      socket = new Socket(acceptorHost, acceptorPort );
+   MyStreamSocket(InetAddress acceptorHost, int acceptorPort ) throws IOException{
+      socket = new java.net.Socket(acceptorHost, acceptorPort );
       setStreams( );
 
    }
 
-   MyStreamSocket(Socket socket)  throws IOException {
+   MyStreamSocket(java.net.Socket socket)  throws IOException {
       this.socket = socket;
       setStreams( );
    }
@@ -56,8 +56,9 @@ public class MyStreamSocket extends Socket {
          output.append(allMessage).append("\n");
       }
 
-      JOptionPane.showMessageDialog(streamFrame,output.toString());
-      return "301";
+
+     // JOptionPane.showMessageDialog(streamFrame,output.toString());
+      return "301!"+ output.toString();
    }
    }
 

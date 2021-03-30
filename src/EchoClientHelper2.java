@@ -40,7 +40,6 @@ public class EchoClientHelper2 {
       if(code.equals("300")){
          String status;
          status = mySocket.viewAllMessages();
-
          returnCode = status;
           }
 

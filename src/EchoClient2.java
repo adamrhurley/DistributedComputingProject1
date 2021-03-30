@@ -1,13 +1,15 @@
+import javax.net.ssl.SSLSocketFactory;
 import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
+import java.net.Socket;
 
 
 /**
  * This module contains the presentation logic of an Echo Client.
  * @author M. L. Liu
  */
-public class EchoClient2{
+public class EchoClient2 {
     static JButton buttonLogin;
     static final String endMessage = ".";
     static JFrame frame;
@@ -16,12 +18,13 @@ public class EchoClient2{
     static JButton buttonCreateMessage;
     static JButton buttonViewMessages;
     static JButton buttonLogout;
-    static JLabel usernameLabel,passwordLabel;
+    static JLabel usernameLabel, passwordLabel;
 
-    static JTextField usernameText,passwordText;
+    static JTextField usernameText, passwordText;
 
-    public static void main(String[] args) {
-
+    public static void main(String[] args) throws IOException {
+            System.setProperty("javax.net.ssl.trustStore","DC.store");
+        Socket socket = ((SSLSocketFactory) SSLSocketFactory.getDefault()).createSocket("localhost",500);
         try {
             String hostName = JOptionPane.showInputDialog("Welcome to the Echo client.\n" +
                     "What is the name of the server host?");
@@ -35,7 +38,6 @@ public class EchoClient2{
 
             frame = new JFrame("Login");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
 
 
             usernameLabel = new JLabel("Username");
@@ -65,17 +67,17 @@ public class EchoClient2{
                 String password = passwordText.getText();
                 try {
                     String loginStatus;
-                    loginStatus = helper.protocolInterpreter("100",username + "," + password);
+                    loginStatus = helper.protocolInterpreter("100", username + "," + password);
 
-                   if(loginStatus.equals("101")){
-                       JOptionPane.showMessageDialog(frame, "Login Successful");
-                       frame.dispose();
-                       mainMenu(helper);
-                   }
+                    if (loginStatus.equals("101")) {
+                        JOptionPane.showMessageDialog(frame, "Login Successful");
+                        frame.dispose();
+                        mainMenu(helper);
+                    }
 
-                   if(loginStatus.equals("102")){
-                       JOptionPane.showMessageDialog(frame, "Incorrect Username or Password");
-                   }
+                    if (loginStatus.equals("102")) {
+                        JOptionPane.showMessageDialog(frame, "Incorrect Username or Password");
+                    }
 
                 } catch (IOException ioException) {
                     ioException.printStackTrace();
@@ -86,13 +88,12 @@ public class EchoClient2{
             frame.setSize(1000, 600);
             frame.add(panel);
             frame.setVisible(true);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static void mainMenu(EchoClientHelper2 helper){
+    public static void mainMenu(EchoClientHelper2 helper) {
 
         JFrame frameMenu = new JFrame("Main Menu");
         frameMenu.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -114,29 +115,39 @@ public class EchoClient2{
         panel1.add(buttonViewMessages);
         buttonViewMessages.addActionListener(e -> {
             try {
-                String viewStatus = helper.protocolInterpreter("300",null);
-
-            if (viewStatus.equals("302")) {
-                JOptionPane.showMessageDialog(frame, "No messages have been added", "Warning", JOptionPane.WARNING_MESSAGE);
+                String[] statusArray = new String[1];
+                String viewStatus = helper.protocolInterpreter("300", null);
+                System.out.println(viewStatus);
+                if (viewStatus.contains("!")) {
+                   statusArray = viewStatus.split("!");
+                    System.out.println(statusArray);
+                    System.out.println(statusArray[0]);
+                }
+                if (viewStatus.equals("302")) {
+                    JOptionPane.showMessageDialog(frame, "No messages have been added", "Warning", JOptionPane.WARNING_MESSAGE);
+                }
+                if(statusArray[0].equals("301")){
+                    JOptionPane.showMessageDialog(frame, statusArray[1]);
+                }
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
             }
-            }catch (IOException ioException) {
-                ioException.printStackTrace(); }
         });
 
         panel1.add(buttonLogout);
         buttonLogout.addActionListener(e -> {
 
-                    try {
-                        String logoutStatus = helper.protocolInterpreter("400", null);
+            try {
+                String logoutStatus = helper.protocolInterpreter("400", null);
 
-                        if (logoutStatus.equals("401")) {
-                            System.exit(0);
-                        }
-                    } catch (IOException ioException) {
-                        ioException.printStackTrace();
-                    }
+                if (logoutStatus.equals("401")) {
+                    System.exit(0);
+                }
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
 
-                });
+        });
 
 
         frameMenu.setSize(1000, 600);
@@ -150,17 +161,26 @@ public class EchoClient2{
         frameCreateMessage.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         while (!done) {
             message = JOptionPane.showInputDialog("Enter a message");
+            if (message.contains("!")) {
+                JOptionPane.showMessageDialog(frameCreateMessage, "Message cannot contain '!', try again");
+            }
+            else if(message.isEmpty()){
+                JOptionPane.showMessageDialog(frameCreateMessage, "Message cannot be empty, try again");
 
+            }
+            else {
 
-            if ((message.trim()).equals(endMessage)) {
-                done = true;
-                helper.done();
-            } else {
-                String createStatus = helper.protocolInterpreter("200", message);
-                if (createStatus.equals("201")) {
-                    JOptionPane.showMessageDialog(frameCreateMessage, "Message added successfully");
+                if ((message.trim()).equals(endMessage)) {
+                    done = true;
+                    helper.done();
+                } else {
+                    String createStatus = helper.protocolInterpreter("200", message);
+
+                    if (createStatus.equals("201")) {
+                        JOptionPane.showMessageDialog(frameCreateMessage, "Message added successfully");
+                    }
+
                 }
-
             }
         }
     }

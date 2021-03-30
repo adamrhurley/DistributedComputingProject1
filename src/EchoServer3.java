@@ -1,3 +1,5 @@
+import javax.net.ssl.SSLServerSocketFactory;
+import java.io.IOException;
 import java.net.*;
 
 /**
@@ -10,11 +12,13 @@ import java.net.*;
 
 public class EchoServer3 {
 
-   public static void main(String[] args) {
-
+   public static void main(String[] args) throws IOException {
+     // System.setProperty("javax.net.ssl.trustStore","DC.store");  !--SSL CODE--!
+     // System.setProperty("javax.net.ssl.keyStorePassword","adamhurley"); !--SSL CODE--!
+      //ServerSocket serverSocket = ((SSLServerSocketFactory)SSLServerSocketFactory.getDefault()).createServerSocket(500);!--SSL CODE--!
       int serverPort = 500;    // default port
 
-      if (args.length == 1 )
+     if (args.length == 1 )
          serverPort = Integer.parseInt(args[0]);
       try {
          // instantiates a stream socket for accepting
@@ -32,6 +36,7 @@ public class EchoServer3 {
             Thread theThread =
                new Thread(new EchoServerThread(myDataSocket));
             theThread.start();
+           // new EchoServerThread(serverSocket.accept()).start();  !--SSL CODE--!
             // and go on to the next client
             } //end while forever
        } // end try

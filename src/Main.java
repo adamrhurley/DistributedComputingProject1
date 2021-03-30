@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.io.IOException;
 
 public class Main extends JFrame {
         static JFrame frame;
@@ -20,8 +21,20 @@ public class Main extends JFrame {
 
             buttonLogin.addActionListener(e -> {
 
-                    new Thread(() ->EchoClient2.main(args)).start();
-                    new Thread(() ->EchoServer3.main(args)).start();
+                    new Thread(() -> {
+                        try {
+                            EchoClient2.main(args);
+                        } catch (IOException ioException) {
+                            ioException.printStackTrace();
+                        }
+                    }).start();
+                    new Thread(() -> {
+                        try {
+                            EchoServer3.main(args);
+                        } catch (IOException ioException) {
+                            ioException.printStackTrace();
+                        }
+                    }).start();
                     frame.dispose();
             });
 

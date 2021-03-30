@@ -1,10 +1,14 @@
-class EchoServerThread implements Runnable {
+import java.net.Socket;
+
+class EchoServerThread extends Thread {
    static final String endMessage = ".";
    MyStreamSocket myDataSocket;
+   //Socket socket;
+   //EchoServerThread(MyStreamSocket socket){this.socket = socket;}
 
    EchoServerThread(MyStreamSocket myDataSocket) {
       this.myDataSocket = myDataSocket;
-   }
+  }
  
    public void run( ) {
       boolean done = false;
