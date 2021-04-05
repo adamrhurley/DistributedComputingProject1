@@ -1,4 +1,3 @@
-import javax.net.ssl.SSLServerSocketFactory;
 import java.io.IOException;
 import java.net.*;
 
@@ -25,7 +24,7 @@ public class EchoServer3 {
          //   connections
    	   ServerSocket myConnectionSocket =
             new ServerSocket(serverPort);
-/**/     System.out.println("Echo server ready.");
+/**/     System.out.println("Server ready.");
          while (true) {  // forever loop
             // wait to accept a connection
 /**/        System.out.println("Waiting for a connection.");

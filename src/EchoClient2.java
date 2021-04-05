@@ -23,10 +23,10 @@ public class EchoClient2 {
     static JTextField usernameText, passwordText;
 
     public static void main(String[] args) throws IOException {
-            System.setProperty("javax.net.ssl.trustStore","DC.store");
-        Socket socket = ((SSLSocketFactory) SSLSocketFactory.getDefault()).createSocket("localhost",500);
+           // System.setProperty("javax.net.ssl.trustStore","DC.store"); !--SSL CODE--!
+       // Socket socket = ((SSLSocketFactory) SSLSocketFactory.getDefault()).createSocket("localhost",500); !--SSL CODE--!
         try {
-            String hostName = JOptionPane.showInputDialog("Welcome to the Echo client.\n" +
+            String hostName = JOptionPane.showInputDialog("Welcome\n" +
                     "What is the name of the server host?");
             if (hostName.length() == 0) // if user did not enter a name
                 hostName = "localhost";  //   use the default host name
@@ -49,7 +49,7 @@ public class EchoClient2 {
             usernameText.setPreferredSize(new Dimension(200, 30));
             usernameText.setMaximumSize(new Dimension(200, 30));
 
-            passwordText = new JTextField();
+            passwordText = new JPasswordField();
             passwordText.setPreferredSize(new Dimension(200, 30));
             passwordText.setMaximumSize(new Dimension(200, 30));
 
@@ -66,6 +66,18 @@ public class EchoClient2 {
                 String username = usernameText.getText();
                 String password = passwordText.getText();
                 try {
+                    if(username.isEmpty() && password.isEmpty()){
+                        JOptionPane.showMessageDialog(frame,"Username and Password cannot be empty, try again");
+                    }
+                    else if(username.isEmpty()){
+                        JOptionPane.showMessageDialog(frame,"Username cannot be empty, try again");
+                    }
+
+                    else if(password.isEmpty()){
+                        JOptionPane.showMessageDialog(frame,"Password cannot be empty, try again");
+                    }
+
+                    else{
                     String loginStatus;
                     loginStatus = helper.protocolInterpreter("100", username + "," + password);
 
@@ -77,6 +89,9 @@ public class EchoClient2 {
 
                     if (loginStatus.equals("102")) {
                         JOptionPane.showMessageDialog(frame, "Incorrect Username or Password");
+                        usernameText.setText("");
+                        passwordText.setText("");
+                    }
                     }
 
                 } catch (IOException ioException) {
@@ -117,11 +132,9 @@ public class EchoClient2 {
             try {
                 String[] statusArray = new String[1];
                 String viewStatus = helper.protocolInterpreter("300", null);
-                System.out.println(viewStatus);
                 if (viewStatus.contains("!")) {
                    statusArray = viewStatus.split("!");
-                    System.out.println(statusArray);
-                    System.out.println(statusArray[0]);
+
                 }
                 if (viewStatus.equals("302")) {
                     JOptionPane.showMessageDialog(frame, "No messages have been added", "Warning", JOptionPane.WARNING_MESSAGE);
@@ -141,6 +154,7 @@ public class EchoClient2 {
                 String logoutStatus = helper.protocolInterpreter("400", null);
 
                 if (logoutStatus.equals("401")) {
+                    helper.done();
                     System.exit(0);
                 }
             } catch (IOException ioException) {
@@ -173,11 +187,16 @@ public class EchoClient2 {
                 if ((message.trim()).equals(endMessage)) {
                     done = true;
                     helper.done();
+                    System.exit(0);
                 } else {
                     String createStatus = helper.protocolInterpreter("200", message);
 
                     if (createStatus.equals("201")) {
                         JOptionPane.showMessageDialog(frameCreateMessage, "Message added successfully");
+                    }
+
+                    if(createStatus.equals("202")){
+                        JOptionPane.showMessageDialog(frameCreateMessage, "Error saving message, Try Again");
                     }
 
                 }

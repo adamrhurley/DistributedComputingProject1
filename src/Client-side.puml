@@ -1,0 +1,37 @@
+@startuml
+title Client-Side
+
+left to right direction
+
+Main --|> EchoClient2
+EchoClient2 --|> EchoClientHelper2
+EchoClientHelper2 --|> MyStreamSocket
+
+class Main{
+main()
+}
+
+class EchoClient2{
+main()
+mainMenu()
+messageFrame()
+}
+
+class EchoClientHelper2{
+protocolInterpreter()
+done()
+}
+
+class MyStreamSocket{
+setStreams()
+sendMessage()
+receiveMessage()
+viewAllMessages()
+logout()
+saveMessages()
+sendText()
+checkLogin()
+close()
+
+}
+@enduml

@@ -56,8 +56,6 @@ public class MyStreamSocket extends java.net.Socket {
          output.append(allMessage).append("\n");
       }
 
-
-     // JOptionPane.showMessageDialog(streamFrame,output.toString());
       return "301!"+ output.toString();
    }
    }
@@ -69,8 +67,15 @@ public class MyStreamSocket extends java.net.Socket {
 
    public String saveMessages() throws IOException{
       String message = input.readLine( );
-      allMessages.add(message);
-      return "201";
+
+      if(message.isEmpty()){
+         return "202";
+      }
+      else{
+         allMessages.add(message);
+         return "201";
+      }
+
    }
 
    public void sendText(String message) {

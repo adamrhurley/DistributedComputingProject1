@@ -1,0 +1,29 @@
+@startuml
+
+title Server-Side
+left to right direction
+
+EchoServer3 --|> EchoServerThread
+EchoServerThread --|> MyStreamSocket
+
+class EchoServer3 {
+main()
+}
+
+class EchoServerThread{
+run()
+}
+
+class MyStreamSocket{
+setStreams()
+sendMessage()
+receiveMessage()
+viewAllMessages()
+logout()
+saveMessages()
+sendText()
+checkLogin()
+close()
+
+}
+@enduml

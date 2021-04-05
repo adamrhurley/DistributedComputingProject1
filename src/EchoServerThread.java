@@ -3,8 +3,8 @@ import java.net.Socket;
 class EchoServerThread extends Thread {
    static final String endMessage = ".";
    MyStreamSocket myDataSocket;
-   //Socket socket;
-   //EchoServerThread(MyStreamSocket socket){this.socket = socket;}
+   //Socket socket; !--SSL CODE--!
+   //EchoServerThread(MyStreamSocket socket){this.socket = socket;} !--SSL CODE--!
 
    EchoServerThread(MyStreamSocket myDataSocket) {
       this.myDataSocket = myDataSocket;
