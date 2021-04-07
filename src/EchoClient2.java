@@ -19,6 +19,7 @@ public class EchoClient2 {
     static JButton buttonViewMessages;
     static JButton buttonLogout;
     static JLabel usernameLabel, passwordLabel;
+    private static String portNum;
 
     static JTextField usernameText, passwordText;
 
@@ -30,7 +31,7 @@ public class EchoClient2 {
                     "What is the name of the server host?");
             if (hostName.length() == 0) // if user did not enter a name
                 hostName = "localhost";  //   use the default host name
-            String portNum = JOptionPane.showInputDialog("What is the port number of the server host?");
+            portNum = JOptionPane.showInputDialog("What is the port number of the server host?");
             if (portNum.length() == 0)
                 portNum = "500";          // default port number
             EchoClientHelper2 helper =
@@ -104,8 +105,10 @@ public class EchoClient2 {
             frame.add(panel);
             frame.setVisible(true);
         } catch (IOException e) {
+            JOptionPane.showMessageDialog(frame,"Port number " + portNum + " is already in use");
             e.printStackTrace();
         }
+
     }
 
     public static void mainMenu(EchoClientHelper2 helper) {
@@ -140,7 +143,7 @@ public class EchoClient2 {
                     JOptionPane.showMessageDialog(frame, "No messages have been added", "Warning", JOptionPane.WARNING_MESSAGE);
                 }
                 if(statusArray[0].equals("301")){
-                    JOptionPane.showMessageDialog(frame, statusArray[1]);
+                    JOptionPane.showMessageDialog(frame, statusArray[1], "All Messages",JOptionPane.INFORMATION_MESSAGE);
                 }
             } catch (IOException ioException) {
                 ioException.printStackTrace();
@@ -173,7 +176,7 @@ public class EchoClient2 {
     public static void messageFrame(EchoClientHelper2 helper) throws IOException {
         JFrame frameCreateMessage = new JFrame("Main Menu");
         frameCreateMessage.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        while (!done) {
+
             message = JOptionPane.showInputDialog("Enter a message");
             if (message.contains("!")) {
                 JOptionPane.showMessageDialog(frameCreateMessage, "Message cannot contain '!', try again");
@@ -203,4 +206,3 @@ public class EchoClient2 {
             }
         }
     }
-}

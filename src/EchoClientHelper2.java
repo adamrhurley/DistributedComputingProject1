@@ -8,9 +8,8 @@ public class EchoClientHelper2 {
 
    String returnCode;
 
-   EchoClientHelper2(String hostName,
-                     String portNum) throws IOException {
-
+EchoClientHelper2(String hostName,
+                    String portNum) throws IOException {
       InetAddress serverHost = InetAddress.getByName(hostName);
       int serverPort = Integer.parseInt(portNum);
       //Instantiates a stream-mode socket and wait for a connection.
@@ -18,7 +17,7 @@ public class EchoClientHelper2 {
             serverPort);
 /**/  System.out.println("Connection request made");
    }
-	
+
 
 
 
