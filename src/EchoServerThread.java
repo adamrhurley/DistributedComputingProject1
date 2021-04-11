@@ -24,7 +24,6 @@ class EchoServerThread extends Thread {
                 done = true;
              } //end if
              else {
-                // Now send the echo to the requester
                 myDataSocket.sendMessage(message);
              } //end else
           } //end while !done

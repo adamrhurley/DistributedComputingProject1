@@ -41,7 +41,7 @@ public class MyStreamSocket extends java.net.Socket {
    } // end sendMessage
 
    public String receiveMessage( )
-		throws IOException {	
+		throws IOException {
       // read a line from the data stream
       return input.readLine( );
    } //end receiveMessage
@@ -56,7 +56,7 @@ public class MyStreamSocket extends java.net.Socket {
          output.append(allMessage).append("\n");
       }
 
-      return "301!"+ output.toString();
+      return "301!"+ output;
    }
    }
 
@@ -77,17 +77,6 @@ public class MyStreamSocket extends java.net.Socket {
       }
 
    }
-
-   public void sendText(String message) {
-
-      output.print(message + "\n");
-      //The ensuing flush method call is necessary for the data to
-      // be written to the socket data stream before the
-      // socket is closed.
-      output.flush();
-
-
-   } // end sendMessage
 
    public String checkLogin() throws IOException {
 

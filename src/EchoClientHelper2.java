@@ -24,14 +24,14 @@ EchoClientHelper2(String hostName,
    public String protocolInterpreter(String code, String message) throws IOException {
 
       if(code.equals("100")){
-         mySocket.sendText(message);
+         mySocket.sendMessage(message);
 
 
          returnCode = mySocket.checkLogin();
       }
 
       if(code.equals("200")){
-         mySocket.sendText((message));
+         mySocket.sendMessage((message));
 
          returnCode = mySocket.saveMessages();
       }
